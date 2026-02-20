@@ -259,7 +259,7 @@ local function createplayer(plrid: string,CFREAM)
 		Transparency = 0.2;
 	}, "3D")
 	element[plrid.."LookBeam"] = Screen:CreateElement("Part", {
-		Size = Vector3.new(1,1,(LifeSensor.Position-CFREAM.Position).Magnitude),
+		Size = Vector3.new(4,4,(LifeSensor.Position-CFREAM.Position).Magnitude),
 		Color = Color3.new(1, 1, 1),
 		TopSurface = Enum.SurfaceType.Smooth, -- The `Top` and `Bottom` surfaces
 		BottomSurface = Enum.SurfaceType.Smooth, -- have a stud pattern by default.
@@ -510,7 +510,7 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 		element[plrid.."Beam"].Position = plrCFrame.Position
 		element[plrid.."Bubble"].Position = plrCFrame.Position
 		element[plrid.."LookBeam"].CFrame = CFrame.lookAt((LifeSensor.Position + plrCFrame.Position) / 2,LifeSensor.Position)
-		element[plrid.."LookBeam"].Size = Vector3.new(1,1,(LifeSensor.Position-plrCFrame.Position).Magnitude)
+		element[plrid.."LookBeam"].Size = Vector3.new(4,4,(LifeSensor.Position-plrCFrame.Position).Magnitude)
 		element[plrid.."TrackBeam"].CFrame = plrCFrame
 		CPUTime2 = pilot.getCPUTime()
 	end
