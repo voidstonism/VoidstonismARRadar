@@ -27,11 +27,6 @@ local NoLookBubbleRadius = 50
 --[[
 REMEMBER: INTSTRUMENT UI MUST FACE FORWARD
 Writen by VO1D_STONE with player sorting system made by LuaBloxor. PowerGraph by ArvidSilverLocks
-Enchanced Greatly by ChatGPT (Efficiency Wise) (15-14 PPT) -> (7-8 PPT)
-
-Variant Naming
-E - Efficient
-L - Ultra down throttled for power presevation
 ]]
 
 local Containter = Screen:CreateElement('Frame', {AnchorPoint = Vector2.new(0,0);Position = UDim2.fromScale(0.82,0.49);Size = UDim2.fromScale(0.2*0.9,0.2*1.6);BackgroundTransparency = 0.5;BackgroundColor3 = Color3.new(0, 0, 0);BorderSizePixel = 0;Rotation = 0}) 
