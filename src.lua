@@ -6,10 +6,11 @@ local SecondaryScreen=GetPartFromPort(2,"Screen") or nil
 local Sheild = GetPart("EnergyShield") or nil
 
 Screen:ClearElements()
+Screen:ClearElements3D()
 
 local Radius = 2225
 local Diamater = Radius*2
-local VersionNum = "v4.2 ARE"
+local VersionNum = "v4.3 ARE"
 local PlayerService:Players = require("players")
 local OID = Screen:GetOwnerId()
 local Owner = PlayerService:GetUsername(OID)
@@ -20,6 +21,8 @@ local UnitVariants = {
 	F = "F";
 }
 local UnitType = UnitVariants.F
+
+local NoLookBubbleRadius = 50
 
 --[[
 REMEMBER: INTSTRUMENT UI MUST FACE FORWARD
@@ -63,6 +66,7 @@ local Distance500= Screen:CreateElement('TextLabel', {AnchorPoint = Vector2.new(
 Distance500.Parent = LifeSensorCircle3
 local TempUI = Screen:CreateElement('TextLabel', {AnchorPoint = Vector2.new(0.5,0.5);Position = UDim2.fromScale(0.25,0.75);Size = UDim2.fromScale(0.45,0.45);BackgroundTransparency = 1;BackgroundColor3 = Color3.new(0.174701, 0.382223, 0.162707);BorderSizePixel = 0;Rotation = 0;TextScaled = true;Text = `°{UnitType}`;	TextColor3 = Color3.new(1, 1, 1);}) 
 TempUI.Parent = Info
+local LookAlert = Screen:CreateElement('Frame', {AnchorPoint = Vector2.new(0,0);Position = UDim2.fromScale(0.82,0.29);Size = UDim2.fromScale(0.2*0.9,0.2*0.7);BackgroundTransparency = 0.5;BackgroundColor3 = Color3.new(0, 0, 0);BorderSizePixel = 0;Rotation = 0}) 
 
 local HPBarFrame
 local HPBAR
@@ -215,13 +219,14 @@ local PlayerCategories = {
 	Owners = { Color = Color3.new(0, 0.536767, 0.883925), Suffix = "", List = Owners },
 }
 
-local function createplayer(player: string)
+local function createplayer(plrid: string,CFREAM)
+	local playerNAME = PlayerService:GetUsername(plrid)
 	-- Default settings for the element
-	element[player] = Screen:CreateElement('TextLabel', {
+	element[plrid] = Screen:CreateElement('TextLabel', {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.new(0, 0),
 		Size = UDim2.fromScale(0.01, 0.01),
-		Text = player,
+		Text = playerNAME,
 		TextColor3 = Color3.new(1, 1, 1),
 		BackgroundTransparency = 0,
 		BackgroundColor3 = Color3.new(0.866712, 0.794995, 0.45391),
@@ -232,9 +237,9 @@ local function createplayer(player: string)
 		Rotation = 0
 	})
 
-	element[player].Parent = Containter
+	element[plrid].Parent = Containter
 
-	element[player.."Beam"] = Screen:CreateElement("Part", {
+	element[plrid.."Beam"] = Screen:CreateElement("Part", {
 		CFrame = CFrame.new(0,0,0);
 		Size = Vector3.new(1,400,1),
 		Color = Color3.new(1, 1, 1),
@@ -243,7 +248,7 @@ local function createplayer(player: string)
 		Anchored = true;
 		Transparency = 0.2;
 	}, "3D")
-	element[player.."Bubble"] = Screen:CreateElement("Part", {
+	element[plrid.."Bubble"] = Screen:CreateElement("Part", {
 		CFrame = CFrame.new(0,0,0);
 		Size = Vector3.new(25,25,25),
 		Color = Color3.new(1, 1, 1),
@@ -253,19 +258,43 @@ local function createplayer(player: string)
 		Shape = "Ball";
 		Transparency = 0.2;
 	}, "3D")
-	element[player.."Bubble"].Parent = element[player.."Beam"]
+	element[plrid.."LookBeam"] = Screen:CreateElement("Part", {
+		Size = Vector3.new(1,1,(LifeSensor.Position-CFREAM.Position).Magnitude),
+		Color = Color3.new(1, 1, 1),
+		TopSurface = Enum.SurfaceType.Smooth, -- The `Top` and `Bottom` surfaces
+		BottomSurface = Enum.SurfaceType.Smooth, -- have a stud pattern by default.
+		Anchored = true;
+		Transparency = 0.4;
+		CFrame = CFrame.lookAt(LifeSensor.Position,CFREAM.Position);
+	}, "3D")
+	element[plrid.."TrackBeam"] = Screen:CreateElement("Part", {
+		Size = Vector3.new(1,1,200),
+		Color = Color3.new(1, 1, 1),
+		TopSurface = Enum.SurfaceType.Smooth, -- The `Top` and `Bottom` surfaces
+		BottomSurface = Enum.SurfaceType.Smooth, -- have a stud pattern by default.
+		Anchored = true;
+		Transparency = 0.4;
+		CFrame = CFREAM;
+	}, "3D")
+	element[plrid.."Bubble"].Parent = element[plrid.."Beam"]
 
 	-- Check for each category and apply corresponding styles
+	
 	for category, settings in pairs(PlayerCategories) do
-		if settings.List[player] then
-			element[player].BackgroundColor3 = settings.Color
-			element[player.."Beam"].Color = settings.Color
-			element[player.."Bubble"].Color = settings.Color
-			element[player].Text = player .. " " .. settings.Suffix
+		if settings.List[playerNAME] then
+			element[plrid].BackgroundColor3 = settings.Color
+			element[plrid.."Beam"].Color = settings.Color
+			element[plrid.."Bubble"].Color = settings.Color
+			element[plrid.."TrackBeam"].Color = settings.Color
+			element[plrid.."LookBeam"].Color = settings.Color
+			element[plrid].Text = playerNAME .. " " .. settings.Suffix
 			if category == "Owners" then
-				element[player].Size = UDim2.fromScale(0.02, 0.02) -- Special size for Owners
-				element[player.."Bubble"].Transparency = 1
-				element[player.."Beam"].Transparency = 1
+				element[plrid].Size = UDim2.fromScale(0.02, 0.02) -- Special size for Owners
+				element[plrid.."Bubble"].Transparency = 1
+				element[plrid.."Beam"].Transparency = 1
+				element[plrid.."LookBeam"].Transparency = 1
+				element[plrid.."TrackBeam"].Transparency = 1
+				
 			end
 			return
 		end
@@ -374,6 +403,24 @@ local function cal()
 	end
 end
 
+local function CheckIfLookingAtyou(plrid, CFRAME:CFrame)
+	local Directiontome = (LifeSensor.Position-CFRAME.Position).Unit
+	
+	local DOT = CFRAME.LookVector:Dot(Directiontome)
+	
+	local Distance = (LifeSensor.Position-CFRAME.Position).Magnitude
+	local r = NoLookBubbleRadius
+	local a = Distance
+	
+	local Equation = a/(math.sqrt(r^2+a^2))
+	
+	if DOT > Equation then
+		element[plrid.."LookBeam"].Color = Color3.fromRGB(255, 0, 0)
+	else
+		element[plrid.."LookBeam"].Color = Color3.fromRGB(255, 255, 255)
+	end
+end
+
 
 ResetButton.MouseButton1Click:Connect(function()
 	Beep(0.5)
@@ -402,25 +449,27 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 	Bearing.Text = math.round(theta)
 	theta = math.rad(theta)
 
-	local playerPositions = LifeSensor:GetReading()
+	local playerPositions = LifeSensor:GetPlayers()
 
-	for player, _ in pairs(players) do
-		if not playerPositions[player] then
-			players[player] = nil
-			element[player]:Destroy()
-			element[player.."Beam"]:Destroy()
-			element[player.."Bubble"]:Destroy()
+	for plrid, _ in pairs(players) do
+		if not playerPositions[plrid] then
+			players[plrid] = nil
+			element[plrid]:Destroy()
+			element[plrid.."Beam"]:Destroy()
+			element[plrid.."Bubble"]:Destroy()
+			element[plrid.."LookBeam"]:Destroy()
+			element[plrid.."TrackBeam"]:Destroy()
 		end
 	end
 
-	for player, playerPosition in pairs(playerPositions) do
-		if not players[player] then
-			createplayer(player)
-			players[player] = true
+	for plrid, plrCFrame in pairs(playerPositions) do
+		if not players[plrid] then
+			createplayer(plrid,plrCFrame)
+			players[plrid] = true
 		end
 
-		local X = (playerPosition.X - currentpos.X) / Diamater
-		local Y = (playerPosition.Z - currentpos.Z) / Diamater
+		local X = (plrCFrame.Position.X - currentpos.X) / Diamater
+		local Y = (plrCFrame.Position.Z - currentpos.Z) / Diamater
 		local ad = 0.5
 		local Position = UDim2.fromScale(
 			(X * math.cos(theta)) - (Y * math.sin(theta)) + ad,
@@ -454,10 +503,15 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 		else
 			TempDisplay.TextColor3 = Color3.new(1, 1, 1)
 		end
+		
+		CheckIfLookingAtyou(plrid, plrCFrame)
 
-		element[player].Position = Position
-		element[player.."Beam"].Position = playerPosition
-		element[player.."Bubble"].Position = playerPosition
+		element[plrid].Position = Position
+		element[plrid.."Beam"].Position = plrCFrame.Position
+		element[plrid.."Bubble"].Position = plrCFrame.Position
+		element[plrid.."LookBeam"].CFrame = CFrame.lookAt((LifeSensor.Position + plrCFrame.Position) / 2,LifeSensor.Position)
+		element[plrid.."LookBeam"].Size = Vector3.new(1,1,(LifeSensor.Position-plrCFrame.Position).Magnitude)
+		element[plrid.."TrackBeam"].CFrame = plrCFrame
 		CPUTime2 = pilot.getCPUTime()
 	end
 end
