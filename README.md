@@ -7,4 +7,4 @@ AR Variant of WoSRadar, more features, but much more setting up required.
 
 [OPTIONAL]
 	EnergyShield
-	Screen (regular)
+	Screen (regular) (Via Port 2)
