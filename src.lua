@@ -10,7 +10,7 @@ Screen:ClearElements3D()
 
 local Radius = 2225
 local Diamater = Radius*2
-local VersionNum = "v4.3 ARE"
+local VersionNum = "v4.3.2 ARE"
 local PlayerService:Players = require("players")
 local OID = Screen:GetOwnerId()
 local Owner = PlayerService:GetUsername(OID)
