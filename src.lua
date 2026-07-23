@@ -506,7 +506,7 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 		element[plrid.."Bubble"].Position = plrCFrame.Position
 		element[plrid.."LookBeam"].CFrame = CFrame.lookAt((LifeSensor.Position + plrCFrame.Position) / 2,LifeSensor.Position)
 		element[plrid.."LookBeam"].Size = Vector3.new(4,4,(LifeSensor.Position-plrCFrame.Position).Magnitude)
-		element[plrid.."TrackBeam"].CFrame = plrCFrame
+		element[plrid.."TrackBeam"].CFrame = plrCFrame + plr
 		CPUTime2 = pilot.getCPUTime()
 	end
 end
