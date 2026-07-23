@@ -269,12 +269,12 @@ local function createplayer(plrid: string,CFREAM)
 		BottomSurface = Enum.SurfaceType.Smooth, -- have a stud pattern by default.
 		Anchored = true;
 		Transparency = 0.4;
-		CFrame = CFREAM;
+		CFrame = CFREAM + CFREAM.LookVector*100;
 	}, "3D")
 	element[plrid.."Bubble"].Parent = element[plrid.."Beam"]
 
 	-- Check for each category and apply corresponding styles
-	
+
 	for category, settings in pairs(PlayerCategories) do
 		if settings.List[playerNAME] then
 			element[plrid].BackgroundColor3 = settings.Color
@@ -289,7 +289,7 @@ local function createplayer(plrid: string,CFREAM)
 				element[plrid.."Beam"].Transparency = 1
 				element[plrid.."LookBeam"].Transparency = 1
 				element[plrid.."TrackBeam"].Transparency = 1
-				
+
 			end
 			return
 		end
@@ -400,15 +400,15 @@ end
 
 local function CheckIfLookingAtyou(plrid, CFRAME:CFrame)
 	local Directiontome = (LifeSensor.Position-CFRAME.Position).Unit
-	
+
 	local DOT = CFRAME.LookVector:Dot(Directiontome)
-	
+
 	local Distance = (LifeSensor.Position-CFRAME.Position).Magnitude
 	local r = NoLookBubbleRadius
 	local a = Distance
-	
+
 	local Equation = a/(math.sqrt(r^2+a^2))
-	
+
 	if DOT > Equation then
 		element[plrid.."LookBeam"].Color = Color3.fromRGB(255, 0, 0)
 	else
@@ -457,7 +457,7 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 		end
 	end
 
-	for plrid, plrCFrame in pairs(playerPositions) do
+	for plrid, plrCFrame:CFrame in pairs(playerPositions) do
 		if not players[plrid] then
 			createplayer(plrid,plrCFrame)
 			players[plrid] = true
@@ -498,7 +498,7 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 		else
 			TempDisplay.TextColor3 = Color3.new(1, 1, 1)
 		end
-		
+
 		CheckIfLookingAtyou(plrid, plrCFrame)
 
 		element[plrid].Position = Position
@@ -506,7 +506,7 @@ while task.wait((CPUTime2 - CPUTime1)/50) do
 		element[plrid.."Bubble"].Position = plrCFrame.Position
 		element[plrid.."LookBeam"].CFrame = CFrame.lookAt((LifeSensor.Position + plrCFrame.Position) / 2,LifeSensor.Position)
 		element[plrid.."LookBeam"].Size = Vector3.new(4,4,(LifeSensor.Position-plrCFrame.Position).Magnitude)
-		element[plrid.."TrackBeam"].CFrame = plrCFrame + plr
+		element[plrid.."TrackBeam"].CFrame = plrCFrame + plrCFrame.LookVector*100
 		CPUTime2 = pilot.getCPUTime()
 	end
 end
